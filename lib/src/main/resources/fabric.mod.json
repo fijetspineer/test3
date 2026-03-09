@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "ingamemodeler",
+  "id": "${modId}",
   "version": "${version}",
   "name": "In-Game Model Workbench",
   "description": "Adds a modeling tool with extensive settings and OBJ/STL import-export workflows.",
