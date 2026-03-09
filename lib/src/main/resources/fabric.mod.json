@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "ingamemodeler",
+  "version": "0.1.0",
+  "name": "In-Game Model Workbench",
+  "description": "Adds a modeling tool with extensive settings and OBJ/STL import-export workflows.",
+  "authors": ["GitHub Copilot Coding Agent"],
+  "environment": "*",
+  "entrypoints": {
+    "main": ["io.github.fijetspineer.modeler.ModelWorkbenchMod"],
+    "client": ["io.github.fijetspineer.modeler.ModelWorkbenchClient"]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": ">=1.21.11",
+    "java": ">=17"
+  }
+}
