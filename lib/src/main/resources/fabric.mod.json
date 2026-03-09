@@ -3,7 +3,7 @@
   "id": "ingamemodeler",
   "version": "0.1.0",
   "name": "In-Game Model Workbench",
-  "description": "Adds a modelling tool with extensive settings and OBJ/STL import-export workflows.",
+  "description": "Adds a modeling tool with extensive settings and OBJ/STL import-export workflows.",
   "authors": ["GitHub Copilot Coding Agent"],
   "environment": "*",
   "entrypoints": {

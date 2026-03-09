@@ -10,6 +10,9 @@ public record Vec3(double x, double y, double z) {
     }
 
     public Vec3 divide(double factor) {
+        if (Math.abs(factor) < 1.0E-9) {
+            throw new IllegalArgumentException("factor must not be zero");
+        }
         return new Vec3(x / factor, y / factor, z / factor);
     }
 }
