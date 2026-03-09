@@ -4,6 +4,7 @@ plugins {
 
 group = 'io.github.fijetspineer'
 version = '0.1.0'
+def modVersion = version.toString()
 
 repositories {
     mavenCentral()
@@ -15,16 +16,15 @@ sourceSets {
     }
 }
 
-def fabricStubsJar = tasks.register('fabricStubsJar', Jar) {
-    archiveClassifier = 'fabric-stubs'
-    from sourceSets.fabricStubs.output
-}
-
 dependencies {
-    compileOnly(files(fabricStubsJar.flatMap { it.archiveFile }))
+    compileOnly(sourceSets.fabricStubs.output)
 
     testImplementation libs.junit.jupiter
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+base {
+    archivesName = 'ingamemodeler'
 }
 
 java {
@@ -34,10 +34,58 @@ java {
     withSourcesJar()
 }
 
+tasks.named('processResources') {
+    inputs.property('version', modVersion)
+
+    filesMatching('fabric.mod.json') {
+        expand(version: modVersion)
+    }
+}
+
 tasks.named('compileJava') {
-    dependsOn(fabricStubsJar)
+    dependsOn(tasks.named('fabricStubsClasses'))
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+def verifyModJar = tasks.register('verifyModJar') {
+    def jarTask = tasks.named('jar')
+    dependsOn(jarTask)
+    inputs.file(jarTask.flatMap { it.archiveFile })
+
+    doLast {
+        def jarFile = inputs.files.singleFile
+        def requiredEntries = [
+                'fabric.mod.json',
+                'assets/ingamemodeler/lang/en_us.json',
+                'assets/ingamemodeler/models/item/modeling_tool.json',
+                'assets/ingamemodeler/textures/item/modeling_tool.png',
+                'io/github/fijetspineer/modeler/ModelWorkbenchMod.class',
+                'io/github/fijetspineer/modeler/ModelWorkbenchClient.class'
+        ]
+
+        def missingEntries = []
+        new java.util.zip.ZipFile(jarFile).withCloseable { zipFile ->
+            requiredEntries.each { entryName ->
+                if (zipFile.getEntry(entryName) == null) {
+                    missingEntries << entryName
+                }
+            }
+
+            def modMetadata = zipFile.getInputStream(zipFile.getEntry('fabric.mod.json')).getText('UTF-8')
+            if (!modMetadata.contains("\"version\": \"${modVersion}\"")) {
+                throw new GradleException("fabric.mod.json version does not match project version ${modVersion}")
+            }
+        }
+
+        if (!missingEntries.isEmpty()) {
+            throw new GradleException("Mod jar ${jarFile.name} is missing required entries: ${missingEntries.join(', ')}")
+        }
+    }
+}
+
+tasks.named('check') {
+    dependsOn(verifyModJar)
 }
