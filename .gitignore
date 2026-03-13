@@ -1,8 +1,16 @@
-# Ignore Gradle project-specific cache directory
-.gradle
+# Uploads directory (user files)
+uploads/*
+!uploads/.gitkeep
 
-# Ignore Gradle build output directory
-build
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
 
-# Ignore Kotlin plugin data
-.kotlin
+# OS files
+.DS_Store
+Thumbs.db
+
+# PHP config with credentials
+config/db_credentials.php
